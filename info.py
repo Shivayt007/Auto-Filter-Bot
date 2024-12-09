@@ -25,8 +25,8 @@ ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ
 USERNAME = environ.get('USERNAME', 'https://telegram.me/lovetoride')
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001366123484'))
 CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1001686416905 -1002161064582 -1002356863699').split()]
-DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://aibot:aibot@cluster0.jrx2kdn.mongodb.net/?retryWrites=true&w=majority")
-DATABASE_URI2 = environ.get('DATABASE_URI2', "mongodb+srv://aibot:aibot@cluster0.jrx2kdn.mongodb.net/?retryWrites=true&w=majority")
+DATABASE_URI = environ.get('DATABASE_URI', "mongodb://shiva:shiva@switchleech_autofilter:27017")
+DATABASE_URI2 = environ.get('DATABASE_URI2', "mongodb://shiva:shiva@switchleech_autofilter:27017")
 DATABASE_NAME = environ.get('DATABASE_NAME', "Rahul")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Rahul')
 LOG_API_CHANNEL = int(environ.get('LOG_API_CHANNEL', '-1001366123484'))
