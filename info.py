@@ -20,7 +20,7 @@ def is_enabled(value, default):
 #main variables
 API_ID = int(environ.get('API_ID', '2054877'))
 API_HASH = environ.get('API_HASH', '4227c1e45e462209a3dcc67ada88a44f')
-BOT_TOKEN = environ.get('BOT_TOKEN', '7184229986:AAEW-OlDTSgfaxDF0VpFEX-YYA5LWCUSZP8')
+BOT_TOKEN = environ.get('BOT_TOKEN', '6123226787:AAF9bg0iJxJ0a0OQrXxAxLk80vsQRHO3gAw')
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '957158815').split()]
 USERNAME = environ.get('USERNAME', 'https://telegram.me/lovetoride')
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001366123484'))
