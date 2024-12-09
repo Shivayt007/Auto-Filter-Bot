@@ -24,7 +24,7 @@ BOT_TOKEN = environ.get('BOT_TOKEN', '6123226787:AAF9bg0iJxJ0a0OQrXxAxLk80vsQRHO
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '957158815').split()]
 USERNAME = environ.get('USERNAME', 'https://telegram.me/lovetoride')
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001366123484'))
-CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1001686416905 -1002161064582').split()]
+CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1001686416905 -1002161064582 -1002356863699').split()]
 DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://aibot:aibot@cluster0.jrx2kdn.mongodb.net/?retryWrites=true&w=majority")
 DATABASE_URI2 = environ.get('DATABASE_URI2', "mongodb+srv://aibot:aibot@cluster0.jrx2kdn.mongodb.net/?retryWrites=true&w=majority")
 DATABASE_NAME = environ.get('DATABASE_NAME', "Rahul")
