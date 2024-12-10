@@ -206,12 +206,13 @@ async def start(client:Client, message):
         
         name = files.file_name
         size = get_size(files.file_size)
+        caption = files.caption
         btn = [[
             InlineKeyboardButton("✅ Download ꜰɪʟᴇ ✅", url=link),
             InlineKeyboardButton("⁉️ ʜᴏᴡ ᴛᴏ Download ⁉️", url=settings['tutorial'])
         ]
         ]
-        await message.reply(f"📂 𝐍𝐚𝐦𝐞 ➠  <code>{name}</code>\n\n♻️ 𝐒𝐢𝐳𝐞 ➠  {size}\n\n<b><i>ʏᴏᴜʀ ꜰɪʟᴇ ɪꜱ ʀᴇᴀᴅʏ, ᴘʟᴇᴀꜱᴇ ɢᴇᴛ ᴜꜱɪɴɢ ᴛʜɪꜱ ʟɪɴᴋ 😋.</i></b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True)
+        await message.reply(f"📂 𝐍𝐚𝐦𝐞 ➠  <code>{name}</code>\n\n♻️ 𝐒𝐢𝐳𝐞 ➠  {size}\n\n<code>⚡ Caption ➠ {caption}</code>\n\n<b><i>ʏᴏᴜʀ ꜰɪʟᴇ ɪꜱ ʀᴇᴀᴅʏ, ᴘʟᴇᴀꜱᴇ ɢᴇᴛ ᴜꜱɪɴɢ ᴛʜɪꜱ ʟɪɴᴋ 😋.</i></b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True)
         return
 
     files_ = await get_file_details(file_id)           
