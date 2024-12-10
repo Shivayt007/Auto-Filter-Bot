@@ -1,5 +1,6 @@
 #pyrofork==2.3.45
-PyroTGFork
+#PyroTGFork
+git+https://github.com/KurimuzonAkuma/pyrogram
 tgcrypto
 pymongo>=4.5
 motor>=3.0.0
