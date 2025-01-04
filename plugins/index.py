@@ -82,7 +82,9 @@ async def channel_info(bot, message):
     text += f'\n**Total:** {len(ids)}'
     await message.reply(text)
 
-async def index_files_to_db(lst_msg_id, chat, msg, bot, skip):
+
+async for message in bot.iter_messages(chat_id=chat, offset_id=161054, reverse=True):
+
     start_time = time.time()
     total_files = 0
     duplicate = 0
