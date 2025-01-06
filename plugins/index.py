@@ -82,6 +82,7 @@ async def channel_info(bot, message):
     text += f'\n**Total:** {len(ids)}'
     await message.reply(text)
 
+
 async def index_files_to_db(lst_msg_id, chat, msg, bot, skip):
     start_time = time.time()
     total_files = 0
@@ -91,57 +92,65 @@ async def index_files_to_db(lst_msg_id, chat, msg, bot, skip):
     no_media = 0
     unsupported = 0
     current = 0
+    offset_id = lst_msg_id + 1  # Start after the last message ID
 
     async with lock:
         try:
-            async for message in bot.iter_messages(chat_id=chat, reverse=True, offset_id=lst_msg_id):
-                if current < skip:
+            while offset_id > 0:
+                # Fetch messages in batches of 100, starting from the current offset
+                messages = await bot.get_messages(chat_id=chat, offset_id=offset_id, limit=100)
+                if not messages:  # No more messages to fetch
+                    break
+
+                for message in reversed(messages):  # Process messages in reverse order
+                    if current < skip:
+                        current += 1
+                        continue
+
+                    time_taken = get_readable_time(time.time() - start_time)
+                    if temp.CANCEL:
+                        temp.CANCEL = False
+                        await msg.edit(f"Successfully Cancelled!\nCompleted in {time_taken}\n\nSaved <code>{total_files}</code> files to Database!\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>\nUnsupported Media: <code>{unsupported}</code>\nErrors Occurred: <code>{errors}</code>")
+                        return
+
                     current += 1
-                    continue
+                    if current % 30 == 0:
+                        btn = [[
+                            InlineKeyboardButton('CANCEL', callback_data=f'index#cancel#{chat}#{lst_msg_id}#{skip}')
+                        ]]
+                        await msg.edit_text(text=f"Total messages received: <code>{current}</code>\nTotal messages saved: <code>{total_files}</code>\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>\nUnsupported Media: <code>{unsupported}</code>\nErrors Occurred: <code>{errors}</code>", reply_markup=InlineKeyboardMarkup(btn))
 
-                time_taken = get_readable_time(time.time() - start_time)
-                if temp.CANCEL:
-                    temp.CANCEL = False
-                    await msg.edit(f"Successfully Cancelled!\nCompleted in {time_taken}\n\nSaved <code>{total_files}</code> files to Database!\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>\nUnsupported Media: <code>{unsupported}</code>\nErrors Occurred: <code>{errors}</code>")
-                    return
+                    if message.empty:
+                        deleted += 1
+                        continue
+                    elif not message.media:
+                        no_media += 1
+                        continue
+                    elif message.media not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.DOCUMENT]:
+                        unsupported += 1
+                        continue
 
-                current += 1
-                if current % 30 == 0:
-                    btn = [[
-                        InlineKeyboardButton('CANCEL', callback_data=f'index#cancel#{chat}#{lst_msg_id}#{skip}')
-                    ]]
-                    await msg.edit_text(text=f"Total messages received: <code>{current}</code>\nTotal messages saved: <code>{total_files}</code>\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>\nUnsupported Media: <code>{unsupported}</code>\nErrors Occurred: <code>{errors}</code>", reply_markup=InlineKeyboardMarkup(btn))
+                    media = getattr(message, message.media.value, None)
+                    if not media:
+                        unsupported += 1
+                        continue
+                    elif media.mime_type not in ['video/mp4', 'video/x-matroska']:
+                        unsupported += 1
+                        continue
 
-                if message.empty:
-                    deleted += 1
-                    continue
-                elif not message.media:
-                    no_media += 1
-                    continue
-                elif message.media not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.DOCUMENT]:
-                    unsupported += 1
-                    continue
+                    media.caption = message.caption
+                    sts = await save_file(media)
+                    if sts == 'suc':
+                        total_files += 1
+                    elif sts == 'dup':
+                        duplicate += 1
+                    elif sts == 'err':
+                        errors += 1
 
-                media = getattr(message, message.media.value, None)
-                if not media:
-                    unsupported += 1
-                    continue
-                elif media.mime_type not in ['video/mp4', 'video/x-matroska']:
-                    unsupported += 1
-                    continue
-
-                media.caption = message.caption
-                sts = await save_file(media)
-                if sts == 'suc':
-                    total_files += 1
-                elif sts == 'dup':
-                    duplicate += 1
-                elif sts == 'err':
-                    errors += 1
-
+                offset_id = messages[-1].message_id - 1  # Update offset_id to the oldest message in the batch
         except Exception as e:
             await msg.reply(f'Index canceled due to Error - {e}')
         else:
             time_taken = get_readable_time(time.time() - start_time)
             await msg.edit(f'Successfully saved <code>{total_files}</code> files to the Database!\nCompleted in {time_taken}\n\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>\nUnsupported Media: <code>{unsupported}</code>\nErrors Occurred: <code>{errors}</code>')
-
+            
