@@ -208,7 +208,7 @@ async def start(client:Client, message):
         size = get_size(files.file_size)
         caption = files.caption
         btn = [[
-            InlineKeyboardButton("✅ Download ꜰɪʟᴇ ✅", url=link1),
+            InlineKeyboardButton("✅ Download ꜰɪʟᴇ ✅", url=link),
             InlineKeyboardButton("⁉️ ʜᴏᴡ ᴛᴏ Download ⁉️", url=settings['tutorial'])
         ]
         ]
